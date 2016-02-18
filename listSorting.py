@@ -47,8 +47,9 @@ def convert_to_cleaned_words_list(string):
 
     '''
 
-    # chomp off any newlines or white spaces at end:
+    # chomp off any newlines or white spaces at ends:
     string = string.rstrip()
+    string = string.lstrip()
 
     # remove ascii, & keep numbers, letters, and -'s:
     throwawaychars = re.compile(r'[^\w\s\-]+')
@@ -100,30 +101,26 @@ def insert_sublist(mainList, subInds, subList):
     return mainList
 
 
-#############################
-# main function starts here #
-#############################
-
-def main():
+def performListSorting(data):
     '''
-    Pulls in a file.
-
-    Takes a string as input and processes it into words:
+    This is the function that does the heavy lifting, and calls
+    the other functions.
+    It takes in a string and processes it into words:
     -each word is an integer (+ or -), or a character string
     -the delimiters for words are blank spaces.
     -non-digit and non-alphabetical characters are removed
 
-    Then, produces a new file with the output.
+    Then, it produces a new string, where the chars are sorted
+    and the ints are sorted within their original indices.
+
+    Example:
+
+    >>> data = ' 2-0 ca-t -bi?rd -12 do@g bla72a 124 monkey '
+    >>> dataout = performListSorting(data)
+    >>> dataout == '-12 bird bla72a 20 cat dog 124 monkey'
+    True
 
     '''
-
-    # grab command line inputs:
-    script, filein, fileout = argv
-
-    # read in file
-    with open(filein) as f:
-        data = f.read()
-
     # process data:
     words = convert_to_cleaned_words_list(data)
 
@@ -150,6 +147,28 @@ def main():
     words = insert_sublist(words, stringInds, strings)
     words = insert_sublist(words, intInds, ints)
     dataout = ' '.join(words)
+
+    return dataout
+
+#############################
+# main function starts here #
+#############################
+
+
+def main():
+    '''
+
+    '''
+
+    # grab command line inputs:
+    script, filein, fileout = argv
+
+    # read in file:
+    with open(filein) as f:
+        data = f.read()
+
+    # do the list sorting:
+    dataout = performListSorting(data)
 
     # write to file:
     with open(fileout, "w") as fout:
